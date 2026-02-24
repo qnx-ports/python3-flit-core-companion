@@ -1,0 +1,38 @@
+# Maintainer: Leo Shen <yishen@qnx.com>
+pkgname=python3-flit-core
+pkgver=3.12.0
+pkgrel=1
+pkgdesc="simple packaging tool for simple packages (core)"
+url="https://flit.readthedocs.io/"
+arch="noarch"
+license="BSD-3-Clause"
+makedepends="python3-installer"
+#checkdepends="py3-pytest py3-testpath"
+source="https://files.pythonhosted.org/packages/source/f/flit/flit-$pkgver.tar.gz
+	vendor-licenses.patch
+"
+builddir="$srcdir/flit-$pkgver/flit_core"
+options="!check" # py3-testpath depends on this
+
+
+build() {
+    # don't need this with py3.11 for tomli
+    rm -rf flit_core/vendor/
+    python3 build_dists.py
+}
+
+check() {
+    python3 -m pytest
+}
+
+package() {
+    python3 -m installer -d "$pkgdir" \
+        dist/flit_core-$pkgver-py3-none-any.whl
+}
+
+
+
+sha512sums="
+f8ed1f0e53452def182453db91a44c9ded5413fe74e2678bb7d56b3640d6ba6f43cccb55ad73e939cc5ca236fa2bf7b3e0f6d77fe4a4f12f90a9e437b561edb2  flit-3.12.0.tar.gz
+cee12b7275f8d1e2dc989d79b44d86fcd714bd5166a197d455b40d8c74c2eec66dfa204e1759e90fd9d5ae9b50e91d68648ee5e3223dc01dde79eeab411bfcb1  vendor-licenses.patch
+"
